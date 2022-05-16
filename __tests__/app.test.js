@@ -79,3 +79,25 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Status 200: updates vote count by a positive value", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 100 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(200);
+      });
+  });
+
+  test("Status 200: updates vote count by a negative value", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -100 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(0);
+      });
+  });
+});

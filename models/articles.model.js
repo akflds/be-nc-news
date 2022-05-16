@@ -23,3 +23,21 @@ exports.fetchArticle = (article_id) => {
     }
   });
 };
+
+exports.updateArticle = (article_id, body) => {
+  console.log(body);
+  if (body.inc_votes) {
+    const queryStr = `
+    UPDATE articles 
+    SET votes = votes + $1 
+    WHERE article_id = $2
+    RETURNING *;
+    `;
+    const queryVals = [body.inc_votes, article_id];
+    return db.query(queryStr, queryVals).then((results) => {
+      return results.rows[0];
+    });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+};

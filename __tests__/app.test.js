@@ -100,4 +100,24 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.article.votes).toBe(0);
       });
   });
+
+  test("Status 400: indicates a malformed body in the request", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: indicates bad request has been sent", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "one" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });

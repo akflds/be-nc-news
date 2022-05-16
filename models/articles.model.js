@@ -25,7 +25,6 @@ exports.fetchArticle = (article_id) => {
 };
 
 exports.updateArticle = (article_id, body) => {
-  console.log(body);
   if (body.inc_votes) {
     const queryStr = `
     UPDATE articles 

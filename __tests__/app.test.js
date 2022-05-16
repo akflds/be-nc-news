@@ -141,3 +141,15 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  test("Status 200: returns a list of users, including their usernames", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        expect(body.users.every((user) => user.username)).toBe(true);
+      });
+  });
+});

@@ -11,3 +11,4 @@ An API that mimics a social news service (e.g. Reddit). This project is built wi
    echo 'PGDATABASE=nc_news' > ./.env.development
    echo 'PGDATABASE=nc_news_test' > ./env.test
    ```
+4. Use `npm run setup-dbs` to setup the databases

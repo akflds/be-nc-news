@@ -34,7 +34,11 @@ exports.updateArticle = (article_id, body) => {
     `;
     const queryVals = [body.inc_votes, article_id];
     return db.query(queryStr, queryVals).then((results) => {
-      return results.rows[0];
+      if (results.rows.length) {
+        return results.rows[0];
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found." });
+      }
     });
   } else {
     return Promise.reject({ status: 400, msg: "Bad request." });

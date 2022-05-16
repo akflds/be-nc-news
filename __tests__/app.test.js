@@ -56,6 +56,7 @@ describe("GET /api/articles/:article_id", () => {
             body: "I find this existence challenging",
             created_at: expect.any(String), // ignore GMT/BST conversion
             votes: 100,
+            comment_count: 11,
           })
         );
       });

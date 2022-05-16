@@ -10,9 +10,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-  if (db.end) {
-    db.end();
-  }
+  db.end();
 });
 
 describe("GET /api/notARoute", () => {
@@ -21,7 +19,6 @@ describe("GET /api/notARoute", () => {
       .get("/api/notARoute")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Route not found.");
       });
   });

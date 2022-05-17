@@ -307,4 +307,17 @@ describe("POST /api/articles/:article_id/comments", () => {
         );
       });
   });
+
+  test("Status 422: returns unprocessable entity when given an unknown user", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "andy",
+        body: "a test comment",
+      })
+      .expect(422)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Unprocessable entity.");
+      });
+  });
 });

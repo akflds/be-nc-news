@@ -19,12 +19,12 @@ exports.fetchCommentsByArticle = (article_id) => {
   });
 };
 
-exports.insertComment = (article_id, body) => {
+exports.insertComment = (article_id, comment) => {
   if (
-    body.username &&
-    body.body &&
-    typeof body.username === "string" &&
-    typeof body.body === "string"
+    comment.username &&
+    comment.body &&
+    typeof comment.username === "string" &&
+    typeof comment.body === "string"
   ) {
     const queryStr = `
     INSERT INTO comments
@@ -33,7 +33,7 @@ exports.insertComment = (article_id, body) => {
       ($1, $2, $3)
     RETURNING *;
     `;
-    const queryVals = [article_id, body.username, body.body];
+    const queryVals = [article_id, comment.username, comment.body];
 
     return db.query(queryStr, queryVals).then((results) => {
       return results.rows[0];

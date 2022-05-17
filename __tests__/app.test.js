@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
+require("jest-sorted");
 
 const testData = require("../db/data/test-data");
 
@@ -201,6 +202,18 @@ describe("GET /api/articles", () => {
               comment_count: expect.any(Number),
             })
           );
+        });
+      });
+  });
+
+  test("Status 200: returns articles ordered by date, in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: true,
         });
       });
   });

@@ -42,7 +42,8 @@ exports.fetchArticles = () => {
       WHERE comments.article_id = a.article_id
     ) AS comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username;
+  JOIN users ON a.author = users.username
+  ORDER BY a.created_at DESC;
 `;
 
   return db.query(queryStr).then((results) => {

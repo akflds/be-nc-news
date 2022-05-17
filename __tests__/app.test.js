@@ -218,4 +218,21 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  test("Status 200: Kev's bonus test to check the first object against values from the test data", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0]).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "sam",
+          created_at: "2020-11-03T09:12:00.000Z",
+          votes: 0,
+          comment_count: 2,
+        });
+      });
+  });
 });

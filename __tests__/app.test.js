@@ -257,4 +257,13 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+
+  test("Status 200: returns an empty array if there are no comments for the specified article", () => {
+    return request(app)
+      .get(`/api/articles/2/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
 });

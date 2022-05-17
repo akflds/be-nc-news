@@ -15,7 +15,6 @@ exports.fetchCommentsByArticle = (article_id) => {
   const queryVals = [article_id];
 
   return db.query(queryStr, queryVals).then((results) => {
-    console.log(results.rows);
     return results.rows;
   });
 };

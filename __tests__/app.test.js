@@ -358,4 +358,17 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 400: returns bad request when given article_id in an invalid format", () => {
+    return request(app)
+      .post("/api/articles/one/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });

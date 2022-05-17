@@ -285,3 +285,103 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("Status 201: adds a new comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            body: "a test comment",
+            article_id: 1,
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
+      });
+  });
+
+  test("Status 422: returns unprocessable entity when given an unknown user", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "andy",
+        body: "a test comment",
+      })
+      .expect(422)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Unprocessable entity.");
+      });
+  });
+
+  test("Status 400: returns bad request when given incorrect keys", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "sam",
+        body: "a test comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given an incorrect data types", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: 100,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given incomplete object", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given article_id in an invalid format", () => {
+    return request(app)
+      .post("/api/articles/one/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 404: returns bad request when given an non-existant article_id", () => {
+    return request(app)
+      .post("/api/articles/90000/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+});

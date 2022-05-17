@@ -18,3 +18,27 @@ exports.fetchCommentsByArticle = (article_id) => {
     return results.rows;
   });
 };
+
+exports.insertComment = (article_id, comment) => {
+  if (
+    comment.username &&
+    comment.body &&
+    typeof comment.username === "string" &&
+    typeof comment.body === "string"
+  ) {
+    const queryStr = `
+    INSERT INTO comments
+      (article_id, author, body)
+    VALUES
+      ($1, $2, $3)
+    RETURNING *;
+    `;
+    const queryVals = [article_id, comment.username, comment.body];
+
+    return db.query(queryStr, queryVals).then((results) => {
+      return results.rows[0];
+    });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+};

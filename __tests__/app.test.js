@@ -235,6 +235,19 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  describe.only("Queries", () => {
+    test("Status 200: returns articles sorted by the given query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSorted({
+            key: "comment_count",
+            descending: true,
+          });
+        });
+    });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

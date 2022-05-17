@@ -28,8 +28,8 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = () => {
-  const queryStr = `
+exports.fetchArticles = (sort_by = "created_at") => {
+  let queryStr = `
   SELECT
     users.name AS author,
     a.title,
@@ -42,11 +42,12 @@ exports.fetchArticles = () => {
       WHERE comments.article_id = a.article_id
     ) AS comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username
-  ORDER BY a.created_at DESC;
-`;
+  JOIN users ON a.author = users.username`;
+
+  queryStr += ` ORDER BY ${sort_by} DESC`;
 
   return db.query(queryStr).then((results) => {
+    console.log(results.rows);
     return results.rows;
   });
 };

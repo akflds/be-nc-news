@@ -285,3 +285,26 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("Status 201: adds a new comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            body: "a test comment",
+            article_id: 1,
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
+      });
+  });
+});

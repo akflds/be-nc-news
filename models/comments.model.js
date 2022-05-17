@@ -18,3 +18,18 @@ exports.fetchCommentsByArticle = (article_id) => {
     return results.rows;
   });
 };
+
+exports.insertComment = (article_id, body) => {
+  const queryStr = `
+  INSERT INTO comments
+    (article_id, author, body)
+  VALUES
+    ($1, $2, $3)
+  RETURNING *;
+  `;
+  const queryVals = [article_id, body.username, body.body];
+
+  return db.query(queryStr, queryVals).then((results) => {
+    return results.rows[0];
+  });
+};

@@ -60,6 +60,7 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
+
   test("Status 200: returns an individual article with comment count", () => {
     return request(app)
       .get(`/api/articles/1`)
@@ -178,6 +179,29 @@ describe("GET /api/users", () => {
       .then(({ body }) => {
         expect(body.users).toHaveLength(4);
         expect(body.users.every((user) => user.username)).toBe(true);
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("Status 200: returns a list of articles", () => {
+    return request(app)
+      .get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String), // ignore GMT/BST conversion
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
       });
   });
 });

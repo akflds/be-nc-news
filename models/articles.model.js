@@ -28,6 +28,28 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
+exports.fetchArticles = () => {
+  const queryStr = `
+  SELECT
+    users.name AS author,
+    a.title,
+    a.article_id,
+    a.topic,
+    a.created_at,
+    a.votes,
+    ( SELECT CAST (COUNT(*) AS INTEGER)
+      FROM comments
+      WHERE comments.article_id = a.article_id
+    ) AS comment_count
+  FROM articles AS a
+  JOIN users ON a.author = users.username;
+`;
+
+  return db.query(queryStr).then((results) => {
+    return results.rows;
+  });
+};
+
 exports.updateArticle = (article_id, body) => {
   if (body.inc_votes) {
     const queryStr = `

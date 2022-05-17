@@ -62,6 +62,15 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
+  test("Status 200: returns an article with 0 comments", () => {
+    return request(app)
+      .get(`/api/articles/2`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe(0);
+      });
+  });
+
   test("Status 400: indicates a bad request has been sent", () => {
     return request(app)
       .get("/api/articles/seven")

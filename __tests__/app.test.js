@@ -266,4 +266,22 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
+
+  test("Status 400: should indicate bad request if article_id is invalid value not exist", () => {
+    return request(app)
+      .get("/api/articles/one/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 404: should indicate if an article_id is not found", () => {
+    return request(app)
+      .get("/api/articles/900000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 });

@@ -371,4 +371,17 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 404: returns bad request when given an non-existant article_id", () => {
+    return request(app)
+      .post("/api/articles/90000/comments")
+      .send({
+        username: "butter_bridge",
+        body: "a test comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 });

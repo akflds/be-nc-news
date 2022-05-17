@@ -190,6 +190,7 @@ describe("GET /api/articles", () => {
       .get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
         body.articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({

@@ -333,4 +333,29 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 400: returns bad request when given an incorrect data types", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: 100,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given incomplete object", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });

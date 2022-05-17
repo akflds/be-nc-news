@@ -20,7 +20,12 @@ exports.fetchCommentsByArticle = (article_id) => {
 };
 
 exports.insertComment = (article_id, body) => {
-  if (body.username && body.body) {
+  if (
+    body.username &&
+    body.body &&
+    typeof body.username === "string" &&
+    typeof body.body === "string"
+  ) {
     const queryStr = `
     INSERT INTO comments
       (article_id, author, body)

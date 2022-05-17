@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
+require("jest-sorted");
 
 const testData = require("../db/data/test-data");
 
@@ -60,6 +61,7 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
+
   test("Status 200: returns an individual article with comment count", () => {
     return request(app)
       .get(`/api/articles/1`)
@@ -178,6 +180,59 @@ describe("GET /api/users", () => {
       .then(({ body }) => {
         expect(body.users).toHaveLength(4);
         expect(body.users.every((user) => user.username)).toBe(true);
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("Status 200: returns a list of articles", () => {
+    return request(app)
+      .get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String), // ignore GMT/BST conversion
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+
+  test("Status 200: returns articles ordered by date, in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: true,
+        });
+      });
+  });
+
+  test("Status 200: Kev's bonus test to check the first object against values from the test data", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0]).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "sam",
+          created_at: "2020-11-03T09:12:00.000Z",
+          votes: 0,
+          comment_count: 2,
+        });
       });
   });
 });

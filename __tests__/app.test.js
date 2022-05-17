@@ -320,4 +320,17 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Unprocessable entity.");
       });
   });
+
+  test("Status 400: returns bad request when given incorrect keys", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "sam",
+        body: "a test comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });

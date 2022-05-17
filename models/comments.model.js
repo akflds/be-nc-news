@@ -20,16 +20,20 @@ exports.fetchCommentsByArticle = (article_id) => {
 };
 
 exports.insertComment = (article_id, body) => {
-  const queryStr = `
-  INSERT INTO comments
-    (article_id, author, body)
-  VALUES
-    ($1, $2, $3)
-  RETURNING *;
-  `;
-  const queryVals = [article_id, body.username, body.body];
+  if (body.username && body.body) {
+    const queryStr = `
+    INSERT INTO comments
+      (article_id, author, body)
+    VALUES
+      ($1, $2, $3)
+    RETURNING *;
+    `;
+    const queryVals = [article_id, body.username, body.body];
 
-  return db.query(queryStr, queryVals).then((results) => {
-    return results.rows[0];
-  });
+    return db.query(queryStr, queryVals).then((results) => {
+      return results.rows[0];
+    });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
 };

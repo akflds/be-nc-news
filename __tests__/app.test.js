@@ -235,6 +235,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
   test("Status 200: returns articles sorted by the given query", () => {
     return request(app)
       .get("/api/articles?sort_by=comment_count")
@@ -304,6 +305,52 @@ describe("GET /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 200: returns correct results for multiple queries", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted({ key: "votes", descending: false });
+      });
+  });
+
+  test("Status 400: bad request if using a key that isn't sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort=comment_count")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using incorrect key to order", () => {
+    return request(app)
+      .get("/api/articles?order_by=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using an incorrect key for topics", () => {
+    return request(app)
+      .get("/api/articles?get_topic=mitch")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using a key that isn't permitted", () => {
+    return request(app)
+      .get("/api/articles?article_id=1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
       });
   });
 });

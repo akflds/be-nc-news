@@ -17,6 +17,15 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
+  const permittedQueries = ["sort_by", "order", "topic"];
+
+  // throws error on invalid query (?sort=..., or ?topics)
+  if (
+    !Object.keys(req.query).every((query) => permittedQueries.includes(query))
+  ) {
+    throw { status: 400, msg: "Bad request." };
+  }
+
   const { sort_by, order, topic } = req.query;
   Promise.all([fetchTopics(), fetchArticles(sort_by, order, topic)])
     .then(([topics, articles]) => {

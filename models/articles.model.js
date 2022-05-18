@@ -10,13 +10,13 @@ exports.fetchArticle = (article_id) => {
   a.topic,
   a.created_at,
   a.votes,
-  ( SELECT CAST (COUNT(*) AS INTEGER) 
-    FROM comments  
-    WHERE comments.article_id = $1
-  ) AS comment_count
+  COUNT(comments.comment_id)::INT as comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username 
-  WHERE a.article_id = $1`;
+    LEFT JOIN users ON users.username = a.author
+    LEFT JOIN comments ON comments.article_id = a.article_id
+  WHERE a.article_id = $1
+  GROUP BY a.article_id, a.title, users.username
+  `;
   const queryVals = [article_id];
 
   return db.query(queryStr, queryVals).then((results) => {
@@ -48,19 +48,15 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
     a.topic,
     a.created_at,
     a.votes,
-    ( SELECT CAST (COUNT(*) AS INTEGER)
-      FROM comments
-      WHERE comments.article_id = a.article_id
-    ) AS comment_count
+    COUNT(comments.comment_id)::INT as comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username`;
+    LEFT JOIN users ON users.username = a.author
+    LEFT JOIN comments ON comments.article_id = a.article_id
+  GROUP BY a.article_id, a.title, users.username`;
 
   queryStr += ` ORDER BY ${sort_by} ${order}`;
 
-  console.log(queryStr);
-
   return db.query(queryStr).then((results) => {
-    console.log(results.rows);
     return results.rows;
   });
 };

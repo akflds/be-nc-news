@@ -1,7 +1,6 @@
 const fs = require("fs/promises");
 
 exports.getEndpoints = (req, res, err) => {
-  console.log(__dirname);
   return fs
     .readFile("./endpoints.json", "utf8")
     .then((endpoints) => {

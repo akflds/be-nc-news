@@ -51,5 +51,11 @@ exports.removeComment = (comment_id) => {
   `;
 
   const queryVals = [comment_id];
-  return db.query(queryStr, queryVals);
+  return db.query(queryStr, queryVals).then((results) => {
+    if (results.rows.length) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject({ status: 404, msg: "Not found." });
+    }
+  });
 };

@@ -10,17 +10,122 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 1,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
-          "author": "weegembump",
+          "author": "andy",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": "2022-05-18T00:01:00.000Z",
+          "votes": 100,
+          "comment_count": 10
+        },
+        {
+          "article_id": 2,
+          "title": "Blah blah blah",
+          "topic": "blah",
+          "author": "frank",
+          "body": "Text from the article..",
+          "created_at": "2022-05-17T22:02:00.000Z",
+          "votes": 0,
+          "comment_count": 0
         }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an individual article, specified by the article_id",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "andy",
+          "body": "Text from the article..",
+          "created_at": "2022-05-18T00:01:00.000Z",
+          "votes": 100,
+          "comment_count": 10
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the vote count for a specific article",
+    "queries": [],
+    "exampleBody": {
+      "inc_votes": 100
+    },
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "andy",
+          "body": "Text from the article..",
+          "created_at": "2022-05-18T00:01:00.000Z",
+          "votes": 100,
+          "comment_count": 10
+        }
+      ]
+    }
+  },
+
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for the specified article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "votes": 5,
+          "created_at": "2022-05-18T00:01:00.000Z",
+          "author": "andy_username",
+          "body": "This is where the comment goes"
+        },
+        {
+          "comment_id": 2,
+          "votes": 0,
+          "created_at": "2022-04-18T21:21:00.000Z",
+          "author": "frank_is_great",
+          "body": "Blah blah blah"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a new comment with the given",
+    "queries": [],
+    "exampleBody": {
+      "username": "another_user",
+      "body": "first comment!"
+    },
+    "exampleResponse": {
+      "author": "another_user",
+      "body": "first comment!",
+      "article_id": 1,
+      "created_at": "2022-04-18T21:21:00.000Z",
+      "votes": 0
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes the comment with the specified id",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        { "username": "frank_is_great" },
+        { "username": "another_user" }
       ]
     }
   }

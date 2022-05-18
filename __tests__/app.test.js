@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 require("jest-sorted");
+const endpoints = require("../endpoints.json");
 
 const testData = require("../db/data/test-data");
 
@@ -14,7 +15,16 @@ afterAll(() => {
   db.end();
 });
 
-describe("GET /api/notARoute", () => {
+describe("GET /api", () => {
+  test("Status 200: returns a JSON object representing the endpoints", () => {
+    return request(app)
+      .get("/api")
+      .then(({ type, body }) => {
+        expect(body).toEqual(endpoints);
+        expect(type).toEqual("application/json");
+      });
+  });
+
   test("Status 404: indicates resource has not been found", () => {
     return request(app)
       .get("/api/notARoute")

@@ -289,7 +289,23 @@ describe("GET /api/articles", () => {
       });
   });
 
-  // test topic with no articles is empty
+  test("Status 200: returns empty array when given topic that exists, but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(0);
+      });
+  });
+
+  test("Status 404: specified topic does not exist in the db", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

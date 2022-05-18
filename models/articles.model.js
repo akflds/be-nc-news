@@ -28,7 +28,18 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at") => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const permittedSortOptions = [
+    "created_at",
+    "comment_count",
+    "votes",
+    "article_id",
+  ];
+
+  if (!permittedSortOptions.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+
   let queryStr = `
   SELECT
     users.name AS author,
@@ -44,7 +55,9 @@ exports.fetchArticles = (sort_by = "created_at") => {
   FROM articles AS a
   JOIN users ON a.author = users.username`;
 
-  queryStr += ` ORDER BY ${sort_by} DESC`;
+  queryStr += ` ORDER BY ${sort_by} ${order}`;
+
+  console.log(queryStr);
 
   return db.query(queryStr).then((results) => {
     console.log(results.rows);

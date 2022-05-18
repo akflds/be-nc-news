@@ -503,3 +503,9 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Status 204: removes the specified comment", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+});

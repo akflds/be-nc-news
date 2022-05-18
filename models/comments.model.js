@@ -42,3 +42,20 @@ exports.insertComment = (article_id, comment) => {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }
 };
+
+exports.removeComment = (comment_id) => {
+  const queryStr = `
+  DELETE FROM comments
+  WHERE comment_id = $1
+  RETURNING *
+  `;
+
+  const queryVals = [comment_id];
+  return db.query(queryStr, queryVals).then((results) => {
+    if (results.rows.length) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject({ status: 404, msg: "Not found." });
+    }
+  });
+};

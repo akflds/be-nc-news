@@ -503,3 +503,27 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Status 204: removes the specified comment", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+  test("Status 400: returns bad request when sending invalid option for comment_id", () => {
+    return request(app)
+      .delete("/api/comments/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 404: returns not found when trying to delete a comments that isn't present in the db", () => {
+    return request(app)
+      .delete("/api/comments/900000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+});

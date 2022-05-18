@@ -28,7 +28,7 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   const permittedSortOptions = [
     "created_at",
     "comment_count",
@@ -37,6 +37,8 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
   ];
 
   const permittedOrderOptions = ["asc", "desc"];
+
+  const queryVals = [];
 
   if (
     !permittedSortOptions.includes(sort_by) ||
@@ -57,11 +59,19 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
   FROM articles AS a
     LEFT JOIN users ON users.username = a.author
     LEFT JOIN comments ON comments.article_id = a.article_id
-  GROUP BY a.article_id, a.title, users.username`;
+  `;
 
-  queryStr += ` ORDER BY ${sort_by} ${order}`;
+  if (topic) {
+    queryStr += ` WHERE a.topic = $1`;
+    queryVals.push(topic);
+  }
 
-  return db.query(queryStr).then((results) => {
+  queryStr += `
+    GROUP BY a.article_id, a.title, users.username
+    ORDER BY ${sort_by} ${order}
+    `;
+
+  return db.query(queryStr, queryVals).then((results) => {
     return results.rows;
   });
 };

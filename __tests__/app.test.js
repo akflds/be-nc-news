@@ -276,6 +276,20 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 200: returns articles on a given topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(
+          body.articles.every((article) => article.topic === "mitch")
+        ).toBe(true);
+      });
+  });
+
+  // test topic with no articles is empty
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

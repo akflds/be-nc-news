@@ -36,7 +36,12 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
     "article_id",
   ];
 
-  if (!permittedSortOptions.includes(sort_by)) {
+  const permittedOrderOptions = ["asc", "desc"];
+
+  if (
+    !permittedSortOptions.includes(sort_by) ||
+    !permittedOrderOptions.includes(order)
+  ) {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }
 

@@ -235,39 +235,46 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  describe("Queries", () => {
-    test("Status 200: returns articles sorted by the given query", () => {
-      return request(app)
-        .get("/api/articles?sort_by=comment_count")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSorted({
-            key: "comment_count",
-            descending: true,
-          });
+  test("Status 200: returns articles sorted by the given query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "comment_count",
+          descending: true,
         });
-    });
+      });
+  });
 
-    test("Status 400: only sorts on permitted columns", () => {
-      return request(app)
-        .get("/api/articles?sort_by=banana")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad request.");
-        });
-    });
+  test("Status 400: only sorts on permitted columns", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-    test("Status 200: returns articles in the specified order", () => {
-      return request(app)
-        .get("/api/articles?order=asc")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSorted({
-            key: "created_at",
-            descending: false,
-          });
+  test("Status 200: returns articles in the specified order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: false,
         });
-    });
+      });
+  });
+
+  test("Status: 400: only orders on permitted values", () => {
+    return request(app)
+      .get("/api/articles?order=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
   });
 });
 

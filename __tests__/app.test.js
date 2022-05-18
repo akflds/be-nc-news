@@ -235,6 +235,124 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  test("Status 200: returns articles sorted by the given query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "comment_count",
+          descending: true,
+        });
+      });
+  });
+
+  test("Status 400: only sorts on permitted columns", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: returns articles in the specified order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: false,
+        });
+      });
+  });
+
+  test("Status: 400: only orders on permitted values", () => {
+    return request(app)
+      .get("/api/articles?order=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: returns articles on a given topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(
+          body.articles.every((article) => article.topic === "mitch")
+        ).toBe(true);
+      });
+  });
+
+  test("Status 200: returns empty array when given topic that exists, but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(0);
+      });
+  });
+
+  test("Status 404: specified topic does not exist in the db", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 200: returns correct results for multiple queries", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted({ key: "votes", descending: false });
+      });
+  });
+
+  test("Status 400: bad request if using a key that isn't sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort=comment_count")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using incorrect key to order", () => {
+    return request(app)
+      .get("/api/articles?order_by=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using an incorrect key for topics", () => {
+    return request(app)
+      .get("/api/articles?get_topic=mitch")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: bad request if using a key that isn't permitted", () => {
+    return request(app)
+      .get("/api/articles?article_id=1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -308,16 +426,16 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("Status 422: returns unprocessable entity when given an unknown user", () => {
+  test("Status 404: returns unprocessable entity when given an unknown user", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
         username: "andy",
         body: "a test comment",
       })
-      .expect(422)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Unprocessable entity.");
+        expect(body.msg).toBe("Not found.");
       });
   });
 

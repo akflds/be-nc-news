@@ -4,6 +4,8 @@ const {
   updateArticle,
 } = require("../models/articles.model");
 
+const { getTopics, fetchTopics } = require("../models/topics.model");
+
 exports.getArticle = (req, res, next) => {
   fetchArticle(req.params.article_id)
     .then((article) => {
@@ -15,9 +17,27 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
-    .then((articles) => {
-      res.status(200).send({ articles });
+  const permittedQueries = ["sort_by", "order", "topic"];
+
+  // throws error on invalid query (?sort=..., or ?topics)
+  if (
+    !Object.keys(req.query).every((query) => permittedQueries.includes(query))
+  ) {
+    throw { status: 400, msg: "Bad request." };
+  }
+
+  const { sort_by, order, topic } = req.query;
+  Promise.all([fetchTopics(), fetchArticles(sort_by, order, topic)])
+    .then(([topics, articles]) => {
+      if (topic) {
+        if (topics.find((ele) => ele.slug === topic)) {
+          res.status(200).send({ articles });
+        } else {
+          return Promise.reject({ status: 404, msg: "Not found." });
+        }
+      } else {
+        res.status(200).send({ articles });
+      }
     })
     .catch((err) => {
       next(err);

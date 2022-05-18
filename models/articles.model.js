@@ -10,13 +10,13 @@ exports.fetchArticle = (article_id) => {
   a.topic,
   a.created_at,
   a.votes,
-  ( SELECT CAST (COUNT(*) AS INTEGER) 
-    FROM comments  
-    WHERE comments.article_id = $1
-  ) AS comment_count
+  COUNT(comments.comment_id)::INT as comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username 
-  WHERE a.article_id = $1`;
+    LEFT JOIN users ON users.username = a.author
+    LEFT JOIN comments ON comments.article_id = a.article_id
+  WHERE a.article_id = $1
+  GROUP BY a.article_id, a.title, users.username
+  `;
   const queryVals = [article_id];
 
   return db.query(queryStr, queryVals).then((results) => {
@@ -28,8 +28,26 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = () => {
-  const queryStr = `
+exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const permittedSortOptions = [
+    "created_at",
+    "comment_count",
+    "votes",
+    "article_id",
+  ];
+
+  const permittedOrderOptions = ["asc", "desc"];
+
+  const queryVals = [];
+
+  if (
+    !permittedSortOptions.includes(sort_by) ||
+    !permittedOrderOptions.includes(order)
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+
+  let queryStr = `
   SELECT
     users.name AS author,
     a.title,
@@ -37,16 +55,23 @@ exports.fetchArticles = () => {
     a.topic,
     a.created_at,
     a.votes,
-    ( SELECT CAST (COUNT(*) AS INTEGER)
-      FROM comments
-      WHERE comments.article_id = a.article_id
-    ) AS comment_count
+    COUNT(comments.comment_id)::INT as comment_count
   FROM articles AS a
-  JOIN users ON a.author = users.username
-  ORDER BY a.created_at DESC;
-`;
+    LEFT JOIN users ON users.username = a.author
+    LEFT JOIN comments ON comments.article_id = a.article_id
+  `;
 
-  return db.query(queryStr).then((results) => {
+  if (topic) {
+    queryStr += ` WHERE a.topic = $1`;
+    queryVals.push(topic);
+  }
+
+  queryStr += `
+    GROUP BY a.article_id, a.title, users.username
+    ORDER BY ${sort_by} ${order}
+    `;
+
+  return db.query(queryStr, queryVals).then((results) => {
     return results.rows;
   });
 };

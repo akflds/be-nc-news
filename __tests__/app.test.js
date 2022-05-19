@@ -194,6 +194,31 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET /api/users/:username", () => {
+  test("Status 200: returns a user with the specified username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual({
+          username: "butter_bridge",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          name: "jonny",
+        });
+      });
+  });
+
+  test("Status 404: not found if the user is not present in the database", () => {
+    return request(app)
+      .get("/api/users/not_in_the_db")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+});
+
 describe("GET /api/articles", () => {
   test("Status 200: returns a list of articles", () => {
     return request(app)

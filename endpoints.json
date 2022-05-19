@@ -128,5 +128,18 @@
         { "username": "another_user" }
       ]
     }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an individual user, specified by the username users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "frank_is_great",
+          "name": "frank",
+          "avatar_url": "https://path.to/picture_of_frank.jpg"
+        }
+      ]
+    }
   }
 }

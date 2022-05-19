@@ -682,8 +682,10 @@ describe("POST /api/articles", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
-        author: "sam",
-        body: "a test comment",
+        author: "andy",
+        title: "The best article",
+        content: "The best article content",
+        topic: "paper",
       })
       .expect(400)
       .then(({ body }) => {
@@ -695,7 +697,7 @@ describe("POST /api/articles", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
-        author: "andy",
+        author: "butter_bridge",
         title: "The best article",
         body: "The best article content",
         topic: "dogs",
@@ -710,7 +712,7 @@ describe("POST /api/articles", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
-        author: "andy",
+        author: "butter_bridge",
         title: "The best article",
         body: "The best article content",
       })

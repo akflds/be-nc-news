@@ -663,60 +663,60 @@ describe("POST /api/articles", () => {
       });
   });
 
-  // test("Status 404: returns unprocessable entity when given an unknown user", () => {
-  //   return request(app)
-  //     .post("/api/articles")
-  //     .send({
-  //       author: "andy",
-  //       title: "The best article",
-  //       body: "The best article content",
-  //       topic: "paper",
-  //     })
-  //     .expect(404)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Not found.");
-  //     });
-  // });
+  test("Status 404: returns unprocessable entity when given an unknown user", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "andy",
+        title: "The best article",
+        body: "The best article content",
+        topic: "paper",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 
-  // test("Status 400: returns bad request when given incorrect keys", () => {
-  //   return request(app)
-  //     .post("/api/articles/1/comments")
-  //     .send({
-  //       author: "sam",
-  //       body: "a test comment",
-  //     })
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Bad request.");
-  //     });
-  // });
+  test("Status 400: returns bad request when given incorrect keys", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "sam",
+        body: "a test comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-  // test("Status 400: returns bad request when given a topic that does not exist", () => {
-  //   return request(app)
-  //     .post("/api/articles/1/comments")
-  //     .send({
-  //       author: "andy",
-  //       title: "The best article",
-  //       body: "The best article content",
-  //       topic: "dogs",
-  //     })
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Bad request.");
-  //     });
-  // });
+  test("Status 400: returns bad request when given a topic that does not exist", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "andy",
+        title: "The best article",
+        body: "The best article content",
+        topic: "dogs",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-  // test("Status 400: returns bad request when given incomplete object", () => {
-  //   return request(app)
-  //     .post("/api/articles/1/comments")
-  //     .send({
-  //       author: "andy",
-  //       title: "The best article",
-  //       body: "The best article content",
-  //     })
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Bad request.");
-  //     });
-  // });
+  test("Status 400: returns bad request when given incomplete object", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "andy",
+        title: "The best article",
+        body: "The best article content",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });

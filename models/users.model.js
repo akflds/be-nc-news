@@ -15,6 +15,10 @@ exports.fetchUser = (username) => {
   const queryVals = [username];
 
   return db.query(queryStr, queryVals).then((results) => {
-    return results.rows[0];
+    if (results.rows.length) {
+      return results.rows[0];
+    } else {
+      return Promise.reject({ status: 404, msg: "Not found." });
+    }
   });
 };

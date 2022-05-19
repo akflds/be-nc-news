@@ -194,6 +194,40 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET /api/users/:user_id", () => {
+  test("Status 200: returns a user with the specified username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual({
+          username: "butter_bridge",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          name: "jonny",
+        });
+      });
+  });
+
+  // test("Status 400: bad request if key is invalid type", () => {
+  //   return request(app)
+  //     .get("/api/users/notAnId")
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("Bad request.");
+  //     });
+  // });
+
+  // test("Status 404: not found if user id is not present in the database", () => {
+  //   return request(app)
+  //     .get("/api/users/9000000")
+  //     .expect(404)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("Not found.");
+  //     });
+  // });
+});
+
 describe("GET /api/articles", () => {
   test("Status 200: returns a list of articles", () => {
     return request(app)

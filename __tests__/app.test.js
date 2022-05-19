@@ -635,3 +635,90 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("Status 201: adds a new article", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "butter_bridge",
+        title: "The best article",
+        body: "The best article content",
+        topic: "paper",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            author: "butter_bridge",
+            title: "The best article",
+            body: "The best article content",
+            topic: "paper",
+            created_at: expect.any(String),
+            votes: 0,
+            comment_count: 0,
+          })
+        );
+      });
+  });
+
+  test("Status 404: returns unprocessable entity when given an unknown user", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "andy",
+        title: "The best article",
+        body: "The best article content",
+        topic: "paper",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 400: returns bad request when given incorrect keys", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "andy",
+        title: "The best article",
+        content: "The best article content",
+        topic: "paper",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given a topic that does not exist", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "butter_bridge",
+        title: "The best article",
+        body: "The best article content",
+        topic: "dogs",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 400: returns bad request when given incomplete object", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "butter_bridge",
+        title: "The best article",
+        body: "The best article content",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+});

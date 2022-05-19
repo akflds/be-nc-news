@@ -194,7 +194,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("GET /api/users/:user_id", () => {
+describe("GET /api/users/:username", () => {
   test("Status 200: returns a user with the specified username", () => {
     return request(app)
       .get("/api/users/butter_bridge")
@@ -209,7 +209,7 @@ describe("GET /api/users/:user_id", () => {
       });
   });
 
-  test("Status 404: not found if user id is not present in the database", () => {
+  test("Status 404: not found if the user is not present in the database", () => {
     return request(app)
       .get("/api/users/not_in_the_db")
       .expect(404)

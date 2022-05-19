@@ -47,6 +47,7 @@ This API provides the following endpoints.
 | POST   | /api/articles/:article_id/comments | adds a new comment with the given                                         |
 | DELETE | /api/comments/:comment_id          | removes the comment with the specified id                                 |
 | GET    | /api/users                         | serves an array of all users                                              |
+| GET    | /api/users/:username               | serves an individual user, specified by the username users                |
 
 ## Acknowledgements
 

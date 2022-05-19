@@ -76,6 +76,25 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   });
 };
 
+exports.insertArticle = ({ author, title, body, topic }) => {
+  if (author && title && body && topic) {
+    const queryStr = `
+    INSERT INTO articles
+      (author, title, body, topic)
+    VALUES
+      ($1, $2, $3, $4)
+    RETURNING *, 0 AS comment_count;
+    `;
+    const queryVals = [author, title, body, topic];
+
+    return db.query(queryStr, queryVals).then((results) => {
+      return results.rows[0];
+    });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+};
+
 exports.updateArticle = (article_id, { inc_votes }) => {
   if (inc_votes) {
     const queryStr = `

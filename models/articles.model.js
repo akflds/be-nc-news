@@ -76,15 +76,15 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   });
 };
 
-exports.updateArticle = (article_id, body) => {
-  if (body.inc_votes) {
+exports.updateArticle = (article_id, { inc_votes }) => {
+  if (inc_votes) {
     const queryStr = `
     UPDATE articles 
     SET votes = votes + $1 
     WHERE article_id = $2
     RETURNING *;
     `;
-    const queryVals = [body.inc_votes, article_id];
+    const queryVals = [inc_votes, article_id];
     return db.query(queryStr, queryVals).then((results) => {
       if (results.rows.length) {
         return results.rows[0];

@@ -100,7 +100,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "adds a new comment with the given",
+    "description": "adds a new comment to the specified article",
     "queries": [],
     "exampleBody": {
       "username": "another_user",
@@ -140,6 +140,47 @@
           "avatar_url": "https://path.to/picture_of_frank.jpg"
         }
       ]
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the vote count for a specific comment",
+    "queries": [],
+    "exampleBody": {
+      "inc_votes": 100
+    },
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "andy",
+          "body": "Text from the article..",
+          "created_at": "2022-05-18T00:01:00.000Z",
+          "votes": 100,
+          "comment_count": 10
+        }
+      ]
+    }
+  },
+  "POST /api/articles/": {
+    "description": "adds a new article",
+    "queries": [],
+    "exampleBody": {
+      "author": "another_user",
+      "title": "Dogs are better than cats",
+      "body": "Spread the truth!!",
+      "topic": "dogs"
+    },
+    "exampleResponse": {
+      "article_id": 1,
+      "author": "another_user",
+      "title": "Dogs are better than cats",
+      "body": "Spread the truth!!",
+      "topic": "dogs",
+      "created_at": "2022-04-18T21:21:00.000Z",
+      "votes": 0,
+      "comment_count": 0
     }
   }
 }

@@ -44,10 +44,12 @@ This API provides the following endpoints.
 | GET    | /api/articles/:article_id          | serves an individual article, specified by the article_id                 |
 | PATCH  | /api/articles/:article_id          | updates the vote count for a specific article                             |
 | GET    | /api/articles/:article_id/comments | serves an array of comments for the specified article                     |
-| POST   | /api/articles/:article_id/comments | adds a new comment with the given                                         |
+| POST   | /api/articles/:article_id/comments | adds a new comment for the specified article                              |
 | DELETE | /api/comments/:comment_id          | removes the comment with the specified id                                 |
 | GET    | /api/users                         | serves an array of all users                                              |
 | GET    | /api/users/:username               | serves an individual user, specified by the username users                |
+| PATCH  | /api/comments/:comment_id          | updates the vote count for a specific comment                             |
+| POST   | /api/articles                      | adds a new article                                                        |
 
 ## Acknowledgements
 

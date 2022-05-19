@@ -43,6 +43,27 @@ exports.insertComment = (article_id, comment) => {
   }
 };
 
+exports.updateComment = (comment_id, { inc_votes }) => {
+  if (inc_votes) {
+    const queryStr = `
+    UPDATE comments 
+    SET votes = votes + $1 
+    WHERE comment_id = $2
+    RETURNING *;
+    `;
+    const queryVals = [inc_votes, comment_id];
+    return db.query(queryStr, queryVals).then((results) => {
+      if (results.rows.length) {
+        return results.rows[0];
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found." });
+      }
+    });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad request." });
+  }
+};
+
 exports.removeComment = (comment_id) => {
   const queryStr = `
   DELETE FROM comments

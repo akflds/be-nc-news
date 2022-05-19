@@ -2,6 +2,7 @@ const { fetchArticle } = require("../models/articles.model");
 const {
   fetchCommentsByArticle,
   insertComment,
+  updateComment,
   removeComment,
 } = require("../models/comments.model");
 
@@ -22,6 +23,17 @@ exports.postComment = (req, res, next) => {
   Promise.all([fetchArticle(article_id), insertComment(article_id, req.body)])
     .then(([_, comment]) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  updateComment(comment_id, req.body)
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch((err) => {
       next(err);

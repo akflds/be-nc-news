@@ -585,53 +585,53 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 
-  //   test("Status 200: updates vote count by a negative value", () => {
-  //     return request(app)
-  //       .patch("/api/comments/1")
-  //       .send({ inc_votes: -16 })
-  //       .expect(200)
-  //       .then(({ body }) => {
-  //         expect(body.comment.votes).toBe(0);
-  //       });
-  //   });
+  test("Status 200: updates vote count by a negative value", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: -16 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment.votes).toBe(0);
+      });
+  });
 
-  //   test("Status 400: indicates a bad request when there is an incorrect key in the body", () => {
-  //     return request(app)
-  //       .patch("/api/comments/1")
-  //       .send({ votes: 100 })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toBe("Bad request.");
-  //       });
-  //   });
+  test("Status 400: indicates a bad request when there is an incorrect key in the body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-  //   test("Status 400: indicates a bad request when the wrong type of value is sent in the body ", () => {
-  //     return request(app)
-  //       .patch("/api/comments/1")
-  //       .send({ inc_votes: "one" })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toBe("Bad request.");
-  //       });
-  //   });
+  test("Status 400: indicates a bad request when the wrong type of value is sent in the body ", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "one" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-  //   test("Status 400: indicates a bad request when an incorrect comment_id is given", () => {
-  //     return request(app)
-  //       .patch("/api/comments/seven")
-  //       .send({ inc_votes: 1 })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toBe("Bad request.");
-  //       });
-  //   });
+  test("Status 400: indicates a bad request when an incorrect comment_id is given", () => {
+    return request(app)
+      .patch("/api/comments/seven")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 
-  //   test("Status 404: indicates an id is not found", () => {
-  //     return request(app)
-  //       .patch("/api/comments/9000000")
-  //       .send({ inc_votes: 1 })
-  //       .expect(404)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toBe("Not found.");
-  //       });
-  //   });
+  test("Status 404: indicates an id is not found", () => {
+    return request(app)
+      .patch("/api/comments/9000000")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 });

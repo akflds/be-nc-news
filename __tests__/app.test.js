@@ -417,6 +417,15 @@ describe("GET /api/articles", () => {
         expect(body.articles).toHaveLength(5);
       });
   });
+
+  test("Status 400: returns bad request when using an incorrect value for limit", () => {
+    return request(app)
+      .get("/api/articles?limit=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

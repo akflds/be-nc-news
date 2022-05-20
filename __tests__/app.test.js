@@ -16,22 +16,15 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  test("Status 200: returns a JSON object representing the endpoints", () => {
-    return request(app)
-      .get("/api")
-      .then(({ type, body }) => {
-        expect(body).toEqual(endpoints);
-        expect(type).toEqual("application/json");
-      });
+  test("Status 200: returns a JSON object representing the endpoints", async () => {
+    const { type, body } = await request(app).get("/api").expect(200);
+    expect(body).toEqual(endpoints);
+    expect(type).toEqual("application/json");
   });
 
-  test("Status 404: indicates resource has not been found", () => {
-    return request(app)
-      .get("/api/notARoute")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Route not found.");
-      });
+  test("Status 404: indicates resource has not been found", async () => {
+    const { body } = await request(app).get("/api/notARoute").expect(404);
+    expect(body.msg).toBe("Route not found.");
   });
 });
 

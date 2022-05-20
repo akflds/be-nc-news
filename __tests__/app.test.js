@@ -391,7 +391,7 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("Status 200: returns 10 comments by default", () => {
+  test("Status 200: returns 10 articles by default", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)

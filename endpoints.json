@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -34,7 +34,8 @@
           "votes": 0,
           "comment_count": 0
         }
-      ]
+      ],
+      "total_count": 2
     }
   },
   "GET /api/articles/:article_id": {

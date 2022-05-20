@@ -1,5 +1,19 @@
 const db = require("../db/connection");
 
+exports.totalCommentsByArticle = (article_id) => {
+  const queryStr = `
+    SELECT
+      COUNT(*)::INT as total_count
+    FROM comments
+    WHERE article_id = $1;
+  `;
+
+  const queryVals = [article_id];
+  return db.query(queryStr, queryVals).then((results) => {
+    return results.rows[0];
+  });
+};
+
 exports.fetchCommentsByArticle = (article_id, limit = 10, p = 0) => {
   const queryStr = `
     SELECT 

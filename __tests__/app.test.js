@@ -590,6 +590,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 404: returns not found when p does not exist", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=90000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

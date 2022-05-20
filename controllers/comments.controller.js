@@ -3,6 +3,7 @@ const {
   fetchCommentsByArticle,
   insertComment,
   updateComment,
+  totalCommentsByArticle,
   removeComment,
 } = require("../models/comments.model");
 
@@ -13,9 +14,14 @@ exports.getCommentsByArticle = (req, res, next) => {
   Promise.all([
     fetchArticle(article_id),
     fetchCommentsByArticle(article_id, limit, p),
+    totalCommentsByArticle(article_id),
   ])
-    .then(([_, comments]) => {
-      res.status(200).send({ comments });
+    .then(([_, comments, { total_count }]) => {
+      if (p > total_count) {
+        return Promise.reject({ status: 404, msg: "Not found." });
+      } else {
+        res.status(200).send({ comments });
+      }
     })
     .catch((err) => {
       next(err);

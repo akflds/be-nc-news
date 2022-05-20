@@ -24,7 +24,7 @@ To setup and test this project:
 
    ```
    echo 'PGDATABASE=nc_news' > ./.env.development
-   echo 'PGDATABASE=nc_news' > ./.env.test
+   echo 'PGDATABASE=nc_news_test' > ./.env.test
    ```
 
 4. Run `npm run setup-dbs` to setup the development and test databases

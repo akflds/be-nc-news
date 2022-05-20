@@ -554,6 +554,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBe(5);
       });
   });
+
+  test("Status 400: returns bad request when given an incorrect value for limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

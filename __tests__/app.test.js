@@ -227,7 +227,7 @@ describe("GET /api/articles", () => {
       .get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeTruthy();
         body.articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -256,7 +256,7 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("Status 200: Kev's bonus test to check the first object against values from the test data", () => {
+  test("Status 200: check the first object against values from the test data", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -320,7 +320,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeTruthy();
         expect(
           body.articles.every((article) => article.topic === "mitch")
         ).toBe(true);
@@ -350,7 +350,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=votes&order=asc&topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(11);
+        expect(body.articles.length).toBeTruthy();
         expect(body.articles).toBeSorted({ key: "votes", descending: false });
       });
   });
@@ -388,6 +388,103 @@ describe("GET /api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: returns 10 articles by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(10);
+      });
+  });
+
+  test("Status 200: returns specified number of articles", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+      });
+  });
+
+  test("Status 200: returns specified number of articles for a specified topic", () => {
+    return request(app)
+      .get("/api/articles?limit=5&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+      });
+  });
+
+  test("Status 400: returns bad request when using an incorrect value for limit", () => {
+    return request(app)
+      .get("/api/articles?limit=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: can specify a page and return articles starting from that value", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(2);
+      });
+  });
+  test("Status 200: offset is calculated when given a custom limit", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc&limit=5&p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+        expect(body.articles[0].article_id).toBe(6);
+      });
+  });
+  test("Status 400: returns bad request when using an incorrect value for page", () => {
+    return request(app)
+      .get("/api/articles?p=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+  test("Status 404: returns not found when accessing a page that does not yet exist", () => {
+    return request(app)
+      .get("/api/articles?p=900000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 200: returns the total article count alongside the array of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(12);
+      });
+  });
+
+  test("Status 200: returns the total article count alongside the array of articles with topic filters applied", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(11);
+      });
+  });
+
+  test("Status 200: returns the total article count alongside the array of articles with topic filters applied when there are no articles for a topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(0);
       });
   });
 });

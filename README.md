@@ -19,7 +19,7 @@ This project requires: Node.js (v17.x) and PostgreSQL (v13.6 or above).
 To setup and test this project:
 
 1. Clone the respository and `cd` into the directory
-2. Run `npm install --production=false` to install the project and developer dependencies
+2. Run `npm install` to install the project and any dependencies
 3. From the root of the project directory, run the following to set up environment variables for the test and dev database: :
 
    ```

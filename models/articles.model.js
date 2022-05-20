@@ -1,5 +1,20 @@
 const db = require("../db/connection");
 
+exports.countArticles = (topic) => {
+  let queryStr = `SELECT COUNT (*)::INT AS total_count
+  FROM articles`;
+  const queryVals = [];
+
+  if (topic) {
+    queryStr += `
+    WHERE topic = $1`;
+    queryVals.push(topic);
+  }
+
+  return db.query(queryStr, queryVals).then((results) => {
+    return results.rows[0];
+  });
+};
 exports.fetchArticle = (article_id) => {
   const queryStr = `
   SELECT
@@ -28,7 +43,13 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p = 0,
+  topic
+) => {
   const permittedSortOptions = [
     "created_at",
     "comment_count",
@@ -38,7 +59,7 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
 
   const permittedOrderOptions = ["asc", "desc"];
 
-  const queryVals = [];
+  const queryVals = [limit, p * limit];
 
   if (
     !permittedSortOptions.includes(sort_by) ||
@@ -62,7 +83,8 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   `;
 
   if (topic) {
-    queryStr += ` WHERE a.topic = $1`;
+    queryStr += `WHERE a.topic = $3
+    `;
     queryVals.push(topic);
   }
 
@@ -70,6 +92,10 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     GROUP BY a.article_id, a.title, users.username
     ORDER BY ${sort_by} ${order}
     `;
+
+  queryStr += `
+  LIMIT $1 OFFSET $2
+  `;
 
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;

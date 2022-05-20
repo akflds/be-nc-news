@@ -1,5 +1,6 @@
 const {
   fetchArticles,
+  countArticles,
   fetchArticle,
   insertArticle,
   updateArticle,
@@ -18,7 +19,7 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const permittedQueries = ["sort_by", "order", "topic"];
+  const permittedQueries = ["sort_by", "order", "topic", "limit", "p"];
 
   // throws error on invalid query (?sort=..., or ?topics)
   if (
@@ -27,18 +28,22 @@ exports.getArticles = (req, res, next) => {
     throw { status: 400, msg: "Bad request." };
   }
 
-  const { sort_by, order, topic } = req.query;
-  Promise.all([fetchTopics(), fetchArticles(sort_by, order, topic)])
-    .then(([topics, articles]) => {
-      if (topic) {
-        if (topics.find((ele) => ele.slug === topic)) {
-          res.status(200).send({ articles });
-        } else {
-          return Promise.reject({ status: 404, msg: "Not found." });
-        }
-      } else {
-        res.status(200).send({ articles });
+  const { sort_by, order, topic, limit, p } = req.query;
+  Promise.all([
+    fetchTopics(),
+    fetchArticles(sort_by, order, limit, p, topic),
+    countArticles(topic),
+  ])
+    .then(([topics, articles, { total_count }]) => {
+      if (p > total_count) {
+        return Promise.reject({ status: 404, msg: "Not found." });
       }
+
+      if (topic && !topics.find((ele) => ele.slug === topic)) {
+        return Promise.reject({ status: 404, msg: "Not found." });
+      }
+
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
       next(err);

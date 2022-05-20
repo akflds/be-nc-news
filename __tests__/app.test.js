@@ -495,7 +495,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get(`/api/articles/1/comments`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments).toHaveLength(11);
+        expect(body.comments.length).toBeTruthy();
         body.comments.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
@@ -534,6 +534,24 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 200: returns 10 comments by default", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(10);
+      });
+  });
+
+  test("Status 200: returns specified number of comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(5);
       });
   });
 });

@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticle = (article_id, limit = 10) => {
+exports.fetchCommentsByArticle = (article_id, limit = 10, p = 0) => {
   const queryStr = `
     SELECT 
       users.name AS author,
@@ -10,10 +10,10 @@ exports.fetchCommentsByArticle = (article_id, limit = 10) => {
     FROM comments AS c 
     JOIN users ON c.author = users.username 
     WHERE article_id = $1
-    LIMIT $2;
+    LIMIT $2 OFFSET $3;
   `;
 
-  const queryVals = [article_id, limit];
+  const queryVals = [article_id, limit, p * limit];
 
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;

@@ -563,6 +563,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 200: specify a page to start at", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(1);
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

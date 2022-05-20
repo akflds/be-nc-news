@@ -8,11 +8,11 @@ const {
 
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
-  const { limit } = req.query;
+  const { limit, p } = req.query;
 
   Promise.all([
     fetchArticle(article_id),
-    fetchCommentsByArticle(article_id, limit),
+    fetchCommentsByArticle(article_id, limit, p),
   ])
     .then(([_, comments]) => {
       res.status(200).send({ comments });

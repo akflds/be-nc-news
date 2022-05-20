@@ -53,4 +53,4 @@ This API provides the following endpoints.
 
 ## Acknowledgements
 
-Thanks to [Northcoders](https://northcoders.com) for providing the data for this project and to Emily, August, Kyle and Kev for the code reviews!
+Thanks to [Northcoders](https://northcoders.com) for providing the data for this project and to Emily, August, Kyle, Sarah and Kev for the code reviews!

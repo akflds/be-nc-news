@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 
-exports.fetchTopics = () => {
+exports.fetchTopics = async () => {
   const queryStr = "SELECT * FROM topics;";
-  return db.query(queryStr).then((results) => results.rows);
+  const results = await db.query(queryStr);
+  return results.rows;
 };

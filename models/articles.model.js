@@ -28,7 +28,12 @@ exports.fetchArticle = (article_id) => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  topic
+) => {
   const permittedSortOptions = [
     "created_at",
     "comment_count",
@@ -71,9 +76,16 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     ORDER BY ${sort_by} ${order}
     `;
 
-  queryStr += `
-    LIMIT 10
+  if (topic) {
+    queryStr += `
+    LIMIT $2
     `;
+  } else {
+    queryStr += `
+    LIMIT $1
+    `;
+  }
+  queryVals.push(limit);
 
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;

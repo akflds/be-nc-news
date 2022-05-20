@@ -399,6 +399,24 @@ describe("GET /api/articles", () => {
         expect(body.articles).toHaveLength(10);
       });
   });
+
+  test("Status 200: returns specified number of articles", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+      });
+  });
+
+  test("Status 200: returns specified number of articles for a specified topic", () => {
+    return request(app)
+      .get("/api/articles?limit=5&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

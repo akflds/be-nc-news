@@ -440,7 +440,6 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=article_id&order=asc&limit=5&p=1")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles);
         expect(body.articles).toHaveLength(5);
         expect(body.articles[0].article_id).toBe(6);
       });
@@ -451,6 +450,14 @@ describe("GET /api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request.");
+      });
+  });
+  test("Status 404: returns not found when accessing a page that does not yet exist", () => {
+    return request(app)
+      .get("/api/articles?p=900000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
       });
   });
 });

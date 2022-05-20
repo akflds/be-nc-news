@@ -1,5 +1,6 @@
 const {
   fetchArticles,
+  countArticles,
   fetchArticle,
   insertArticle,
   updateArticle,
@@ -28,17 +29,21 @@ exports.getArticles = (req, res, next) => {
   }
 
   const { sort_by, order, topic, limit, p } = req.query;
-  Promise.all([fetchTopics(), fetchArticles(sort_by, order, limit, p, topic)])
-    .then(([topics, articles]) => {
-      if (topic) {
-        if (topics.find((ele) => ele.slug === topic)) {
-          res.status(200).send({ articles });
-        } else {
-          return Promise.reject({ status: 404, msg: "Not found." });
-        }
-      } else {
-        res.status(200).send({ articles });
+  Promise.all([
+    fetchTopics(),
+    fetchArticles(sort_by, order, limit, p, topic),
+    countArticles(),
+  ])
+    .then(([topics, articles, { count }]) => {
+      if (p > count) {
+        return Promise.reject({ status: 404, msg: "Not found." });
       }
+
+      if (topic && !topics.find((ele) => ele.slug === topic)) {
+        return Promise.reject({ status: 404, msg: "Not found." });
+      }
+
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);

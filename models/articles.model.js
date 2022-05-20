@@ -1,5 +1,10 @@
 const db = require("../db/connection");
 
+exports.countArticles = () => {
+  return db.query(`SELECT COUNT(*) FROM articles;`).then((results) => {
+    return results.rows[0];
+  });
+};
 exports.fetchArticle = (article_id) => {
   const queryStr = `
   SELECT
@@ -68,7 +73,8 @@ exports.fetchArticles = (
   `;
 
   if (topic) {
-    queryStr += ` WHERE a.topic = $3`;
+    queryStr += `WHERE a.topic = $3
+    `;
     queryVals.push(topic);
   }
 

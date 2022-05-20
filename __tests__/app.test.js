@@ -495,7 +495,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get(`/api/articles/1/comments`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments).toHaveLength(11);
+        expect(body.comments.length).toBeTruthy();
         body.comments.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
@@ -531,6 +531,69 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("Status 404: should indicate if an article_id is not found", () => {
     return request(app)
       .get("/api/articles/900000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found.");
+      });
+  });
+
+  test("Status 200: returns 10 comments by default", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(10);
+      });
+  });
+
+  test("Status 200: returns specified number of comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(5);
+      });
+  });
+
+  test("Status 400: returns bad request when given an incorrect value for limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: specify a page to start at", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(1);
+      });
+  });
+
+  test("Status 200: limit and page calculate correctly", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(1);
+      });
+  });
+
+  test("Status 400: returns bad request when p is given incorrect value", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=two")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 404: returns not found when p does not exist", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=90000")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found.");

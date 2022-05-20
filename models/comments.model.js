@@ -1,6 +1,20 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticle = (article_id) => {
+exports.totalCommentsByArticle = (article_id) => {
+  const queryStr = `
+    SELECT
+      COUNT(*)::INT as total_count
+    FROM comments
+    WHERE article_id = $1;
+  `;
+
+  const queryVals = [article_id];
+  return db.query(queryStr, queryVals).then((results) => {
+    return results.rows[0];
+  });
+};
+
+exports.fetchCommentsByArticle = (article_id, limit = 10, p = 0) => {
   const queryStr = `
     SELECT 
       users.name AS author,
@@ -9,10 +23,11 @@ exports.fetchCommentsByArticle = (article_id) => {
       c.body 
     FROM comments AS c 
     JOIN users ON c.author = users.username 
-    WHERE article_id = $1;
+    WHERE article_id = $1
+    LIMIT $2 OFFSET $3;
   `;
 
-  const queryVals = [article_id];
+  const queryVals = [article_id, limit, p * limit];
 
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;

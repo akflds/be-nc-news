@@ -29,19 +29,15 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("Status 200: returns an array of topic objects with a slug and description", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.topics).toHaveLength(3);
-        body.topics.forEach((topic) => {
-          expect.objectContaining({
-            description: expect.any(String),
-            slug: expect.any(String),
-          });
-        });
+  test("Status 200: returns an array of topic objects with a slug and description", async () => {
+    const { body } = await request(app).get("/api/topics").expect(200);
+    expect(body.topics).toHaveLength(3);
+    body.topics.forEach((topic) => {
+      expect.objectContaining({
+        description: expect.any(String),
+        slug: expect.any(String),
       });
+    });
   });
 });
 

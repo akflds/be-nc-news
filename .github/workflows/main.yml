@@ -37,7 +37,7 @@ jobs:
       - name: Run tests
         run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t app
   deploy:
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     needs: [ test-api ]
     steps:
       - name: Checkout Repo

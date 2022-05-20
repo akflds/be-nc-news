@@ -71,6 +71,10 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     ORDER BY ${sort_by} ${order}
     `;
 
+  queryStr += `
+    LIMIT 10
+    `;
+
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;
   });

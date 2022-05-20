@@ -227,7 +227,7 @@ describe("GET /api/articles", () => {
       .get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toHaveLength(10);
         body.articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -320,7 +320,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toHaveLength(10);
         expect(
           body.articles.every((article) => article.topic === "mitch")
         ).toBe(true);
@@ -350,7 +350,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=votes&order=asc&topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toHaveLength(10);
         expect(body.articles).toBeSorted({ key: "votes", descending: false });
       });
   });
@@ -388,6 +388,15 @@ describe("GET /api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request.");
+      });
+  });
+
+  test("Status 200: returns 10 comments by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(10);
       });
   });
 });

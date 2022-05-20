@@ -435,7 +435,7 @@ describe("GET /api/articles", () => {
         expect(body.articles).toHaveLength(2);
       });
   });
-  test("Status 400: offset is calculated when given a custom limit", () => {
+  test("Status 200: offset is calculated when given a custom limit", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=asc&limit=5&p=1")
       .expect(200)

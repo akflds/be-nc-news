@@ -581,6 +581,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBe(1);
       });
   });
+
+  test("Status 400: returns bad request when p is given incorrect value", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=two")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

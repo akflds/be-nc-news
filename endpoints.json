@@ -80,7 +80,7 @@
 
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments for the specified article",
-    "queries": [],
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [
         {

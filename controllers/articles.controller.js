@@ -32,7 +32,7 @@ exports.getArticles = (req, res, next) => {
   Promise.all([
     fetchTopics(),
     fetchArticles(sort_by, order, limit, p, topic),
-    countArticles(),
+    countArticles(topic),
   ])
     .then(([topics, articles, { total_count }]) => {
       if (p > total_count) {

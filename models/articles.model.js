@@ -1,11 +1,19 @@
 const db = require("../db/connection");
 
-exports.countArticles = () => {
-  return db
-    .query(`SELECT COUNT(*)::INT AS total_count FROM articles;`)
-    .then((results) => {
-      return results.rows[0];
-    });
+exports.countArticles = (topic) => {
+  let queryStr = `SELECT COUNT (*)::INT AS total_count
+  FROM articles`;
+  const queryVals = [];
+
+  if (topic) {
+    queryStr += `
+    WHERE topic = $1`;
+    queryVals.push(topic);
+  }
+
+  return db.query(queryStr, queryVals).then((results) => {
+    return results.rows[0];
+  });
 };
 exports.fetchArticle = (article_id) => {
   const queryStr = `

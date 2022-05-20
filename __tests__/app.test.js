@@ -469,6 +469,24 @@ describe("GET /api/articles", () => {
         expect(body.total_count).toBe(12);
       });
   });
+
+  test("Status 200: returns the total article count alongside the array of articles with topic filters applied", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(11);
+      });
+  });
+
+  test("Status 200: returns the total article count alongside the array of articles with topic filters applied when there are no articles for a topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(0);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

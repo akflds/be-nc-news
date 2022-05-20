@@ -445,6 +445,14 @@ describe("GET /api/articles", () => {
         expect(body.articles[0].article_id).toBe(6);
       });
   });
+  test("Status 400: returns bad request when using an incorrect value for page", () => {
+    return request(app)
+      .get("/api/articles?p=five")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request.");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

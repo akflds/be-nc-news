@@ -266,7 +266,7 @@ describe("GET /api/articles", () => {
           title: "Eight pug gifs that remind me of mitch",
           topic: "mitch",
           author: "sam",
-          created_at: "2020-11-03T09:12:00.000Z",
+          created_at: expect.any(String),
           votes: 0,
           comment_count: 2,
         });
@@ -739,7 +739,7 @@ describe("PATCH /api/comments/:comment_id", () => {
             votes: 116,
             author: "butter_bridge",
             article_id: 9,
-            created_at: "2020-04-06T12:17:00.000Z",
+            created_at: expect.any(String),
           })
         );
       });

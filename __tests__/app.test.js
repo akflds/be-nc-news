@@ -426,6 +426,15 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Bad request.");
       });
   });
+
+  test("Status 200: can specify a page and return articles starting from that value", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(2);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

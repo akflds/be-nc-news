@@ -32,6 +32,7 @@ exports.fetchArticles = (
   sort_by = "created_at",
   order = "desc",
   limit = 10,
+  p = 0,
   topic
 ) => {
   const permittedSortOptions = [
@@ -43,7 +44,7 @@ exports.fetchArticles = (
 
   const permittedOrderOptions = ["asc", "desc"];
 
-  const queryVals = [];
+  const queryVals = [limit, p * limit];
 
   if (
     !permittedSortOptions.includes(sort_by) ||
@@ -67,7 +68,7 @@ exports.fetchArticles = (
   `;
 
   if (topic) {
-    queryStr += ` WHERE a.topic = $1`;
+    queryStr += ` WHERE a.topic = $3`;
     queryVals.push(topic);
   }
 
@@ -76,16 +77,9 @@ exports.fetchArticles = (
     ORDER BY ${sort_by} ${order}
     `;
 
-  if (topic) {
-    queryStr += `
-    LIMIT $2
-    `;
-  } else {
-    queryStr += `
-    LIMIT $1
-    `;
-  }
-  queryVals.push(limit);
+  queryStr += `
+  LIMIT $1 OFFSET $2
+  `;
 
   return db.query(queryStr, queryVals).then((results) => {
     return results.rows;

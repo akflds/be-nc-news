@@ -1,13 +1,17 @@
 const db = require("../db/connection");
 
 exports.countArticles = (topic) => {
-  let queryStr = `SELECT COUNT (*)::INT AS total_count
-  FROM articles`;
+  let queryStr = `
+    SELECT COUNT (*)::INT AS total_count
+    FROM articles
+  `;
+
   const queryVals = [];
 
   if (topic) {
     queryStr += `
-    WHERE topic = $1`;
+      WHERE topic = $1
+    `;
     queryVals.push(topic);
   }
 
@@ -17,20 +21,20 @@ exports.countArticles = (topic) => {
 };
 exports.fetchArticle = (article_id) => {
   const queryStr = `
-  SELECT
-  users.name AS author,
-  a.title,
-  a.article_id,
-  a.body,
-  a.topic,
-  a.created_at,
-  a.votes,
-  COUNT(comments.comment_id)::INT as comment_count
-  FROM articles AS a
-    LEFT JOIN users ON users.username = a.author
-    LEFT JOIN comments ON comments.article_id = a.article_id
-  WHERE a.article_id = $1
-  GROUP BY a.article_id, a.title, users.username
+    SELECT
+    users.name AS author,
+    a.title,
+    a.article_id,
+    a.body,
+    a.topic,
+    a.created_at,
+    a.votes,
+    COUNT(comments.comment_id)::INT as comment_count
+    FROM articles AS a
+      LEFT JOIN users ON users.username = a.author
+      LEFT JOIN comments ON comments.article_id = a.article_id
+    WHERE a.article_id = $1
+    GROUP BY a.article_id, a.title, users.username
   `;
   const queryVals = [article_id];
 
@@ -83,7 +87,8 @@ exports.fetchArticles = (
   `;
 
   if (topic) {
-    queryStr += `WHERE a.topic = $3
+    queryStr += `
+      WHERE a.topic = $3
     `;
     queryVals.push(topic);
   }
@@ -94,7 +99,7 @@ exports.fetchArticles = (
     `;
 
   queryStr += `
-  LIMIT $1 OFFSET $2
+    LIMIT $1 OFFSET $2
   `;
 
   return db.query(queryStr, queryVals).then((results) => {
@@ -105,11 +110,11 @@ exports.fetchArticles = (
 exports.insertArticle = ({ author, title, body, topic }) => {
   if (author && title && body && topic) {
     const queryStr = `
-    INSERT INTO articles
-      (author, title, body, topic)
-    VALUES
-      ($1, $2, $3, $4)
-    RETURNING *, 0 AS comment_count;
+      INSERT INTO articles
+        (author, title, body, topic)
+      VALUES
+        ($1, $2, $3, $4)
+      RETURNING *, 0 AS comment_count;
     `;
     const queryVals = [author, title, body, topic];
 
@@ -124,10 +129,10 @@ exports.insertArticle = ({ author, title, body, topic }) => {
 exports.updateArticle = (article_id, { inc_votes }) => {
   if (inc_votes) {
     const queryStr = `
-    UPDATE articles 
-    SET votes = votes + $1 
-    WHERE article_id = $2
-    RETURNING *;
+      UPDATE articles 
+      SET votes = votes + $1 
+      WHERE article_id = $2
+      RETURNING *;
     `;
     const queryVals = [inc_votes, article_id];
     return db.query(queryStr, queryVals).then((results) => {

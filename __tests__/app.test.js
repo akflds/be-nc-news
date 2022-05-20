@@ -572,6 +572,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBe(1);
       });
   });
+
+  test("Status 200: limit and page calculate correctly", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(1);
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments", () => {

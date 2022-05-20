@@ -460,6 +460,15 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Not found.");
       });
   });
+
+  test("Status 200: returns the total article count alongside the array of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(12);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

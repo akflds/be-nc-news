@@ -34,8 +34,8 @@ exports.getArticles = (req, res, next) => {
     fetchArticles(sort_by, order, limit, p, topic),
     countArticles(),
   ])
-    .then(([topics, articles, { count }]) => {
-      if (p > count) {
+    .then(([topics, articles, { total_count }]) => {
+      if (p > total_count) {
         return Promise.reject({ status: 404, msg: "Not found." });
       }
 
@@ -43,7 +43,7 @@ exports.getArticles = (req, res, next) => {
         return Promise.reject({ status: 404, msg: "Not found." });
       }
 
-      res.status(200).send({ articles });
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
       next(err);

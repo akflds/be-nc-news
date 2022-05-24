@@ -17,6 +17,6 @@ exports.fetchUser = async (username) => {
   if (results.rows.length) {
     return results.rows[0];
   } else {
-    return Promise.reject({ status: 404, msg: "Not found." });
+    return Promise.reject({ status: 404, msg: "User not found" });
   }
 };

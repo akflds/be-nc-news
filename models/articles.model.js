@@ -39,7 +39,7 @@ exports.fetchArticle = async (article_id) => {
 
   const results = await db.query(queryStr, queryVals);
   if (results.rows.length === 0) {
-    return Promise.reject({ status: 404, msg: "Not found." });
+    return Promise.reject({ status: 404, msg: "Article not found" });
   } else {
     return results.rows[0];
   }
@@ -67,7 +67,7 @@ exports.fetchArticles = async (
     !permittedSortOptions.includes(sort_by) ||
     !permittedOrderOptions.includes(order)
   ) {
-    return Promise.reject({ status: 400, msg: "Bad request." });
+    return Promise.reject({ status: 400, msg: "Bad request: invalid query" });
   }
 
   let queryStr = `
@@ -115,7 +115,7 @@ exports.insertArticle = async ({ author, title, body, topic }) => {
     const results = await db.query(queryStr, queryVals);
     return results.rows[0];
   } else {
-    return Promise.reject({ status: 400, msg: "Bad request." });
+    return Promise.reject({ status: 400, msg: "Bad request" });
   }
 };
 
@@ -132,9 +132,9 @@ exports.updateArticle = async (article_id, { inc_votes }) => {
     if (results.rows.length) {
       return results.rows[0];
     } else {
-      return Promise.reject({ status: 404, msg: "Not found." });
+      return Promise.reject({ status: 404, msg: "Not found" });
     }
   } else {
-    return Promise.reject({ status: 400, msg: "Bad request." });
+    return Promise.reject({ status: 400, msg: "Bad request" });
   }
 };

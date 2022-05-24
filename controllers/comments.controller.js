@@ -18,7 +18,7 @@ exports.getCommentsByArticle = (req, res, next) => {
   ])
     .then(([_, comments, { total_count }]) => {
       if (p > total_count) {
-        return Promise.reject({ status: 404, msg: "Not found." });
+        return Promise.reject({ status: 404, msg: "Page not found" });
       } else {
         res.status(200).send({ comments });
       }

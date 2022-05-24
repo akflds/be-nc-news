@@ -51,7 +51,7 @@ exports.insertComment = async (article_id, comment) => {
     const results = await db.query(queryStr, queryVals);
     return results.rows[0];
   } else {
-    return Promise.reject({ status: 400, msg: "Bad request." });
+    return Promise.reject({ status: 400, msg: "Bad request" });
   }
 };
 
@@ -68,10 +68,10 @@ exports.updateComment = async (comment_id, { inc_votes }) => {
     if (results.rows.length) {
       return results.rows[0];
     } else {
-      return Promise.reject({ status: 404, msg: "Not found." });
+      return Promise.reject({ status: 404, msg: "Not found" });
     }
   } else {
-    return Promise.reject({ status: 400, msg: "Bad request." });
+    return Promise.reject({ status: 400, msg: "Bad request" });
   }
 };
 
@@ -87,6 +87,6 @@ exports.removeComment = async (comment_id) => {
   if (results.rows.length) {
     return Promise.resolve();
   } else {
-    return Promise.reject({ status: 404, msg: "Not found." });
+    return Promise.reject({ status: 404, msg: "Comment not found" });
   }
 };

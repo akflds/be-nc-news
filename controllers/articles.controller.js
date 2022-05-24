@@ -25,7 +25,7 @@ exports.getArticles = (req, res, next) => {
   if (
     !Object.keys(req.query).every((query) => permittedQueries.includes(query))
   ) {
-    throw { status: 400, msg: "Bad request." };
+    throw { status: 400, msg: "Bad request: invalid query" };
   }
 
   const { sort_by, order, topic, limit, p } = req.query;
@@ -36,11 +36,11 @@ exports.getArticles = (req, res, next) => {
   ])
     .then(([topics, articles, { total_count }]) => {
       if (p > total_count) {
-        return Promise.reject({ status: 404, msg: "Not found." });
+        return Promise.reject({ status: 404, msg: "Page not found" });
       }
 
       if (topic && !topics.find((ele) => ele.slug === topic)) {
-        return Promise.reject({ status: 404, msg: "Not found." });
+        return Promise.reject({ status: 404, msg: "Topic not found" });
       }
 
       res.status(200).send({ articles, total_count });

@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.totalCommentsByArticle = (article_id) => {
+exports.totalCommentsByArticle = async (article_id) => {
   const queryStr = `
     SELECT
       COUNT(*)::INT as total_count
@@ -9,12 +9,11 @@ exports.totalCommentsByArticle = (article_id) => {
   `;
 
   const queryVals = [article_id];
-  return db.query(queryStr, queryVals).then((results) => {
-    return results.rows[0];
-  });
+  const results = await db.query(queryStr, queryVals);
+  return results.rows[0];
 };
 
-exports.fetchCommentsByArticle = (article_id, limit = 10, p = 0) => {
+exports.fetchCommentsByArticle = async (article_id, limit = 10, p = 0) => {
   const queryStr = `
     SELECT 
       users.name AS author,
@@ -29,12 +28,11 @@ exports.fetchCommentsByArticle = (article_id, limit = 10, p = 0) => {
 
   const queryVals = [article_id, limit, p * limit];
 
-  return db.query(queryStr, queryVals).then((results) => {
-    return results.rows;
-  });
+  const results = await db.query(queryStr, queryVals);
+  return results.rows;
 };
 
-exports.insertComment = (article_id, comment) => {
+exports.insertComment = async (article_id, comment) => {
   if (
     comment.username &&
     comment.body &&
@@ -50,15 +48,14 @@ exports.insertComment = (article_id, comment) => {
     `;
     const queryVals = [article_id, comment.username, comment.body];
 
-    return db.query(queryStr, queryVals).then((results) => {
-      return results.rows[0];
-    });
+    const results = await db.query(queryStr, queryVals);
+    return results.rows[0];
   } else {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }
 };
 
-exports.updateComment = (comment_id, { inc_votes }) => {
+exports.updateComment = async (comment_id, { inc_votes }) => {
   if (inc_votes) {
     const queryStr = `
     UPDATE comments 
@@ -67,19 +64,18 @@ exports.updateComment = (comment_id, { inc_votes }) => {
     RETURNING *;
     `;
     const queryVals = [inc_votes, comment_id];
-    return db.query(queryStr, queryVals).then((results) => {
-      if (results.rows.length) {
-        return results.rows[0];
-      } else {
-        return Promise.reject({ status: 404, msg: "Not found." });
-      }
-    });
+    const results = await db.query(queryStr, queryVals);
+    if (results.rows.length) {
+      return results.rows[0];
+    } else {
+      return Promise.reject({ status: 404, msg: "Not found." });
+    }
   } else {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }
 };
 
-exports.removeComment = (comment_id) => {
+exports.removeComment = async (comment_id) => {
   const queryStr = `
   DELETE FROM comments
   WHERE comment_id = $1
@@ -87,11 +83,10 @@ exports.removeComment = (comment_id) => {
   `;
 
   const queryVals = [comment_id];
-  return db.query(queryStr, queryVals).then((results) => {
-    if (results.rows.length) {
-      return Promise.resolve();
-    } else {
-      return Promise.reject({ status: 404, msg: "Not found." });
-    }
-  });
+  const results = await db.query(queryStr, queryVals);
+  if (results.rows.length) {
+    return Promise.resolve();
+  } else {
+    return Promise.reject({ status: 404, msg: "Not found." });
+  }
 };

@@ -24,7 +24,7 @@ describe("GET /api", () => {
 
   test("Status 404: indicates resource has not been found", async () => {
     const { body } = await request(app).get("/api/notARoute").expect(404);
-    expect(body.msg).toBe("Route not found.");
+    expect(body.msg).toBe("Not found");
   });
 });
 
@@ -80,14 +80,14 @@ describe("GET /api/articles/:article_id", () => {
 
   test("Status 400: indicates a bad request has been sent", async () => {
     const { body } = await request(app).get("/api/articles/seven").expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 404: indicates an id is not found", async () => {
     const { body } = await request(app)
       .get("/api/articles/9000000")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Article not found");
   });
 });
 
@@ -113,7 +113,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send({ votes: 100 })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: indicates a bad request when the wrong type of value is sent in the body ", async () => {
@@ -121,7 +121,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send({ inc_votes: "one" })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: indicates a bad request when an incorrect article_id is given", async () => {
@@ -129,7 +129,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/seven")
       .send({ inc_votes: 1 })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 404: indicates an id is not found", async () => {
@@ -137,7 +137,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/9000000")
       .send({ inc_votes: 1 })
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Not found");
   });
 });
 
@@ -168,7 +168,7 @@ describe("GET /api/users/:username", () => {
     const { body } = await request(app)
       .get("/api/users/not_in_the_db")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("User not found");
   });
 });
 
@@ -226,7 +226,7 @@ describe("GET /api/articles", () => {
     const { body } = await request(app)
       .get("/api/articles?sort_by=banana")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 200: returns articles in the specified order", async () => {
@@ -243,7 +243,7 @@ describe("GET /api/articles", () => {
     const { body } = await request(app)
       .get("/api/articles?order=banana")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 200: returns articles on a given topic", async () => {
@@ -267,7 +267,7 @@ describe("GET /api/articles", () => {
     const { body } = await request(app)
       .get("/api/articles?topic=banana")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Topic not found");
   });
 
   test("Status 200: returns correct results for multiple queries", async () => {
@@ -282,28 +282,28 @@ describe("GET /api/articles", () => {
     const { body } = await request(app)
       .get("/api/articles?sort=comment_count")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 400: bad request if using incorrect key to order", async () => {
     const { body } = await request(app)
       .get("/api/articles?order_by=asc")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 400: bad request if using an incorrect key for topics", async () => {
     const { body } = await request(app)
       .get("/api/articles?get_topic=mitch")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 400: bad request if using a key that isn't permitted", async () => {
     const { body } = await request(app)
       .get("/api/articles?article_id=1")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request: invalid query");
   });
 
   test("Status 200: returns 10 articles by default", async () => {
@@ -329,13 +329,14 @@ describe("GET /api/articles", () => {
     const { body } = await request(app)
       .get("/api/articles?limit=five")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 200: can specify a page and return articles starting from that value", async () => {
     const { body } = await request(app).get("/api/articles?p=1").expect(200);
     expect(body.articles).toHaveLength(2);
   });
+
   test("Status 200: offset is calculated when given a custom limit", async () => {
     const { body } = await request(app)
       .get("/api/articles?sort_by=article_id&order=asc&limit=5&p=1")
@@ -343,15 +344,17 @@ describe("GET /api/articles", () => {
     expect(body.articles).toHaveLength(5);
     expect(body.articles[0].article_id).toBe(6);
   });
+
   test("Status 400: returns bad request when using an incorrect value for page", async () => {
     const { body } = await request(app).get("/api/articles?p=five").expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
+
   test("Status 404: returns not found when accessing a page that does not yet exist", async () => {
     const { body } = await request(app)
       .get("/api/articles?p=900000")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Page not found");
   });
 
   test("Status 200: returns the total article count alongside the array of articles", async () => {
@@ -404,14 +407,14 @@ describe("GET /api/articles/:article_id/comments", () => {
     const { body } = await request(app)
       .get("/api/articles/one/comments")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 404: should indicate if an article_id is not found", async () => {
     const { body } = await request(app)
       .get("/api/articles/900000/comments")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Article not found");
   });
 
   test("Status 200: returns 10 comments by default", async () => {
@@ -432,7 +435,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     const { body } = await request(app)
       .get("/api/articles/1/comments?limit=five")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 200: specify a page to start at", async () => {
@@ -453,14 +456,14 @@ describe("GET /api/articles/:article_id/comments", () => {
     const { body } = await request(app)
       .get("/api/articles/1/comments?p=two")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
-  test("Status 404: returns not found when p does not exist", async () => {
+  test("Status 404: returns not found when page does not exist", async () => {
     const { body } = await request(app)
       .get("/api/articles/1/comments?p=90000")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Page not found");
   });
 });
 
@@ -492,7 +495,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: "a test comment",
       })
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Not found");
   });
 
   test("Status 400: returns bad request when given incorrect keys", async () => {
@@ -503,7 +506,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: "a test comment",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: returns bad request when given an incorrect data types", async () => {
@@ -514,7 +517,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: 100,
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: returns bad request when given incomplete object", async () => {
@@ -524,7 +527,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         username: "butter_bridge",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: returns bad request when given article_id in an invalid format", async () => {
@@ -535,10 +538,10 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: "a test comment",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
-  test("Status 404: returns bad request when given an non-existant article_id", async () => {
+  test("Status 404: returns not found if the article_id does not exist", async () => {
     const { body } = await request(app)
       .post("/api/articles/90000/comments")
       .send({
@@ -546,7 +549,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: "a test comment",
       })
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Not found");
   });
 });
 
@@ -559,14 +562,14 @@ describe("DELETE /api/comments/:comment_id", () => {
     const { body } = await request(app)
       .delete("/api/comments/notAnId")
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
-  test("Status 404: returns not found when trying to delete a comments that isn't present in the db", async () => {
+  test("Status 404: returns not found when trying to delete a comment that isn't present in the db", async () => {
     const { body } = await request(app)
       .delete("/api/comments/900000")
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Comment not found");
   });
 });
 
@@ -601,7 +604,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .patch("/api/comments/1")
       .send({ votes: 100 })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: indicates a bad request when the wrong type of value is sent in the body ", async () => {
@@ -609,7 +612,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .patch("/api/comments/1")
       .send({ inc_votes: "one" })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: indicates a bad request when an incorrect comment_id is given", async () => {
@@ -617,7 +620,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .patch("/api/comments/seven")
       .send({ inc_votes: 1 })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 404: indicates an id is not found", async () => {
@@ -625,7 +628,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .patch("/api/comments/9000000")
       .send({ inc_votes: 1 })
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Not found");
   });
 });
 
@@ -664,7 +667,7 @@ describe("POST /api/articles", () => {
         topic: "paper",
       })
       .expect(404);
-    expect(body.msg).toBe("Not found.");
+    expect(body.msg).toBe("Not found");
   });
 
   test("Status 400: returns bad request when given incorrect keys", async () => {
@@ -677,7 +680,7 @@ describe("POST /api/articles", () => {
         topic: "paper",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: returns bad request when given a topic that does not exist", async () => {
@@ -690,7 +693,7 @@ describe("POST /api/articles", () => {
         topic: "dogs",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 
   test("Status 400: returns bad request when given incomplete object", async () => {
@@ -702,6 +705,6 @@ describe("POST /api/articles", () => {
         body: "The best article content",
       })
       .expect(400);
-    expect(body.msg).toBe("Bad request.");
+    expect(body.msg).toBe("Bad request");
   });
 });

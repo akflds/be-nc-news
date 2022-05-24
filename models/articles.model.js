@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.countArticles = (topic) => {
+exports.countArticles = async (topic) => {
   let queryStr = `
     SELECT COUNT (*)::INT AS total_count
     FROM articles
@@ -15,11 +15,10 @@ exports.countArticles = (topic) => {
     queryVals.push(topic);
   }
 
-  return db.query(queryStr, queryVals).then((results) => {
-    return results.rows[0];
-  });
+  const results = await db.query(queryStr, queryVals);
+  return results.rows[0];
 };
-exports.fetchArticle = (article_id) => {
+exports.fetchArticle = async (article_id) => {
   const queryStr = `
     SELECT
     users.name AS author,
@@ -38,16 +37,15 @@ exports.fetchArticle = (article_id) => {
   `;
   const queryVals = [article_id];
 
-  return db.query(queryStr, queryVals).then((results) => {
-    if (results.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Not found." });
-    } else {
-      return results.rows[0];
-    }
-  });
+  const results = await db.query(queryStr, queryVals);
+  if (results.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "Not found." });
+  } else {
+    return results.rows[0];
+  }
 };
 
-exports.fetchArticles = (
+exports.fetchArticles = async (
   sort_by = "created_at",
   order = "desc",
   limit = 10,
@@ -96,18 +94,14 @@ exports.fetchArticles = (
   queryStr += `
     GROUP BY a.article_id, a.title, users.username
     ORDER BY ${sort_by} ${order}
+    LIMIT $1 OFFSET $2
     `;
 
-  queryStr += `
-    LIMIT $1 OFFSET $2
-  `;
-
-  return db.query(queryStr, queryVals).then((results) => {
-    return results.rows;
-  });
+  const results = await db.query(queryStr, queryVals);
+  return results.rows;
 };
 
-exports.insertArticle = ({ author, title, body, topic }) => {
+exports.insertArticle = async ({ author, title, body, topic }) => {
   if (author && title && body && topic) {
     const queryStr = `
       INSERT INTO articles
@@ -118,15 +112,14 @@ exports.insertArticle = ({ author, title, body, topic }) => {
     `;
     const queryVals = [author, title, body, topic];
 
-    return db.query(queryStr, queryVals).then((results) => {
-      return results.rows[0];
-    });
+    const results = await db.query(queryStr, queryVals);
+    return results.rows[0];
   } else {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }
 };
 
-exports.updateArticle = (article_id, { inc_votes }) => {
+exports.updateArticle = async (article_id, { inc_votes }) => {
   if (inc_votes) {
     const queryStr = `
       UPDATE articles 
@@ -135,13 +128,12 @@ exports.updateArticle = (article_id, { inc_votes }) => {
       RETURNING *;
     `;
     const queryVals = [inc_votes, article_id];
-    return db.query(queryStr, queryVals).then((results) => {
-      if (results.rows.length) {
-        return results.rows[0];
-      } else {
-        return Promise.reject({ status: 404, msg: "Not found." });
-      }
-    });
+    const results = await db.query(queryStr, queryVals);
+    if (results.rows.length) {
+      return results.rows[0];
+    } else {
+      return Promise.reject({ status: 404, msg: "Not found." });
+    }
   } else {
     return Promise.reject({ status: 400, msg: "Bad request." });
   }

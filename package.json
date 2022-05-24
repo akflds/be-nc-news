@@ -4,7 +4,7 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "engines" : {
-    "node": "17.x"
+    "node": ">=17.x"
   },
   "scripts": {
     "start": "node ./listen.js",

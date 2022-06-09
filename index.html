@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>NC News API</title>
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/barebones.css" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+  </head>
+  <body>
+    <header><h1>NC News API</h1></header>
+    <section>
+      <p>
+        This API mimics that found on a social news aggregator (think Reddit).
+        It provides functionality to access and manipulate articles, comments,
+        topics and users.
+      </p>
+      <p>
+        Check out a list of available endpoints, or visit the project on
+        <a href="https://github.com/akflds/be-nc-news">GitHub</a> for more
+        information.
+      </p>
+    </section>
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <td>Method</td>
+            <td>Endpoint</td>
+            <td>Description</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GET</td>
+            <td>/api</td>
+            <td>Serves a JSON representation of all the available endpoints</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/topics</td>
+            <td>Serves an array of all topics</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/articles</td>
+            <td>Serves an array of all articles</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/articles/:article_id</td>
+            <td>Serves an individual article, specified by the article_id</td>
+          </tr>
+          <tr>
+            <td>PATCH</td>
+            <td>/api/articles/:article_id</td>
+            <td>Update the vote count for a specific article</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/articles/:article_id/comments</td>
+            <td>Serve an array of comments for the specified article</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/articles/:article_id/comments</td>
+            <td>Add a new comment for the specified article</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>/api/comments/:comment_id</td>
+            <td>Remove the comment with the specified id</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/users</td>
+            <td>Serves an array of all users</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/users/:username</td>
+            <td>Serves an individual user, specified by the username users</td>
+          </tr>
+          <tr>
+            <td>PATCH</td>
+            <td>/api/comments/:comment_id</td>
+            <td>Update the vote count for a specific comment</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/articles</td>
+            <td>Add a new article</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>

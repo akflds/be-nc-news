@@ -4,8 +4,8 @@ const apiRouter = require("./routes/api-router.js");
 const app = express();
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/static/index.html"));
+app.use("/", (req, res) => {
+  express.static("static");
 });
 
 app.use("/api", apiRouter);

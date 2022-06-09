@@ -4,9 +4,7 @@ const apiRouter = require("./routes/api-router.js");
 const app = express();
 app.use(express.json());
 
-app.use("/", (req, res) => {
-  express.static("static");
-});
+app.use("/", express.static("static"));
 
 app.use("/api", apiRouter);
 

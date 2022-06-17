@@ -23,6 +23,7 @@ exports.fetchCommentsByArticle = async (article_id, limit = 10, p = 0) => {
     FROM comments AS c 
     JOIN users ON c.author = users.username 
     WHERE article_id = $1
+    ORDER BY c.created_at DESC
     LIMIT $2 OFFSET $3;
   `;
 
